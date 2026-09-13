@@ -1,0 +1,38 @@
+
+[
+  {
+    "id": "TC01",
+    "type": "direct_query",
+    "question": "Chào bạn, bạn có thể giới thiệu quy trình tuyển dụng chung của công ty không?",
+    "expected_behavior": "Chatbot trả lời trực tiếp từ System Prompt, không cần gọi bất kỳ Tool nào.",
+    "complexity": "Low"
+  },
+  {
+    "id": "TC02",
+    "type": "single_tool_query",
+    "question": "Vị trí Backend Java Developer yêu cầu những kỹ năng gì?",
+    "expected_behavior": "Agent nhận diện nhu cầu tra cứu, tự động phát sinh Tool Call 'job_criteria_lookup' với position_name='Backend Java Developer'.",
+    "complexity": "Medium"
+  },
+  {
+    "id": "TC03",
+    "type": "appointment_booking",
+    "question": "Hãy đặt lịch phỏng vấn cho ứng viên CV2026001 với anh Lê Văn Cường (EMP001) vào lúc 09:00 ngày 22/09/2026, hình thức online.",
+    "expected_behavior": "Agent tự động phát sinh Tool Call 'schedule_interview' với đúng candidate_id, interviewer_id, interview_time và location.",
+    "complexity": "Medium"
+  },
+  {
+    "id": "TC04",
+    "type": "multi_step_reasoning",
+    "question": "Ứng viên CV2026002 ứng tuyển vị trí AI Engineer, hãy chấm điểm độ phù hợp và nếu điểm trên 70 thì tự động đặt lịch phỏng vấn với HR Phạm Thị Dung vào 10:00 ngày 25/09/2026.",
+    "expected_behavior": "Agent thực hiện chuỗi suy luận ReAct: gọi 'score_cv_against_position' để lấy match_score trước, đánh giá điều kiện (score > 70), sau đó mới quyết định có gọi 'schedule_interview' hay không. Với dữ liệu mock (score=55), Agent phải dừng lại và phản hồi rằng ứng viên chưa đạt ngưỡng, không tự ý đặt lịch.",
+    "complexity": "High"
+  },
+  {
+    "id": "TC05",
+    "type": "edge_case_handling",
+    "question": "Hãy tra cứu thông tin ứng viên có mã CV9999999.",
+    "expected_behavior": "Agent gọi Tool 'get_candidate_status', nhận kết quả NOT_FOUND, và đưa ra phản hồi lịch sự thông báo không tìm thấy ứng viên, không tự bịa đặt dữ liệu.",
+    "complexity": "Medium"
+  }
+]

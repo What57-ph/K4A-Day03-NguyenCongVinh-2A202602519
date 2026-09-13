@@ -71,7 +71,7 @@ def run_react_agent(user_query: str, provider, mcp_server: MCPAcademicServer) ->
     step = 0
     trace_logs = []
     tools_list = mcp_server.list_tools()
-    
+
     while step < MAX_ITERATIONS:
         step += 1
         step_start_time = time.time()
@@ -120,12 +120,13 @@ def run_react_agent(user_query: str, provider, mcp_server: MCPAcademicServer) ->
                 # Tổng hợp Final Answer từ kết quả Observation thực tế
                 if obs_data.get("status") == "SUCCESS":
                     if "data" in obs_data:
-                        d = obs_data["data"]
-                        final_answer = (
-                            f"Kết quả tra cứu cho sinh viên {obs_data.get('student_id', '')} ({d.get('full_name', '')}): "
-                            f"Lớp {d.get('class', '')}, GPA: {d.get('gpa', '')}, Email: {d.get('email', '')}, "
-                            f"Trạng thái: {d.get('status', '')}, Cố vấn: {d.get('advisor', '')}."
-                        )
+                        # d = obs_data["data"]
+                        # final_answer = (
+                        #     f"Kết quả tra cứu cho sinh viên {obs_data.get('student_id', '')} ({d.get('full_name', '')}): "
+                        #     f"Lớp {d.get('class', '')}, GPA: {d.get('gpa', '')}, Email: {d.get('email', '')}, "
+                        #     f"Trạng thái: {d.get('status', '')}, Cố vấn: {d.get('advisor', '')}."
+                        # )
+                        final_answer = build_final_answer(tool_name, obs_data)
                     elif "message" in obs_data:
                         final_answer = obs_data["message"]
                     else:
@@ -161,6 +162,90 @@ def run_react_agent(user_query: str, provider, mcp_server: MCPAcademicServer) ->
 
     return trace_logs
 
+def build_final_answer(tool_name: str, obs_data: dict) -> str:
+    """
+    Tổng hợp final_answer từ obs_data theo tool_name, không kiểm tra status.
+    Dùng .get(...) với fallback để tránh lỗi khi thiếu field (VD: NOT_FOUND chỉ có "message").
+    """
+
+    if tool_name == "job_criteria_lookup":
+        positions = obs_data.get("data", [])
+        if not positions:
+            return obs_data.get("message", "Không tìm thấy vị trí tuyển dụng nào khớp với yêu cầu.")
+        lines = [
+            f"🔹 {p.get('position_name', '')} ({p.get('department', '')}) — {p.get('status', '')}\n"
+            f"   • Cấp bậc: {p.get('level', '')}\n"
+            f"   • Kỹ năng bắt buộc: {', '.join(p.get('required_skills', []))}\n"
+            f"   • Kỹ năng ưu tiên: {', '.join(p.get('preferred_skills', []))}\n"
+            f"   • Kinh nghiệm tối thiểu: {p.get('min_experience_years', '')} năm\n"
+            f"   • Học vấn: {p.get('education_requirement', '')}\n"
+            f"   • Mức lương: {p.get('salary_range', '')}"
+            for p in positions
+        ]
+        return "Tìm thấy các vị trí sau:\n\n" + "\n\n".join(lines)
+
+    if tool_name == "parse_cv":
+        d = obs_data.get("data", {})
+        if not d:
+            return obs_data.get("message", "Không thể trích xuất thông tin từ CV này.")
+        return (
+            f"Đã trích xuất CV của {d.get('full_name', '')}: "
+            f"kỹ năng {', '.join(d.get('extracted_skills', []))}, "
+            f"{d.get('experience_years', '')} năm kinh nghiệm, "
+            f"học vấn: {d.get('education', '')}."
+        )
+
+    if tool_name == "score_cv_against_position":
+        if "match_score" not in obs_data:
+            return obs_data.get("message", "Không thể chấm điểm phù hợp cho ứng viên này.")
+        return (
+            f"Ứng viên {obs_data.get('candidate_id', '')} đạt điểm phù hợp "
+            f"{obs_data.get('match_score', '')}/100 cho vị trí {obs_data.get('position_id', '')}. "
+            f"Lý do: {obs_data.get('explanation', '')}"
+        )
+
+    if tool_name == "get_candidate_status":
+        if "current_status" not in obs_data:
+            return obs_data.get("message", "Không tìm thấy trạng thái ứng viên yêu cầu.")
+        return (
+            f"Ứng viên {obs_data.get('full_name', '')} ({obs_data.get('candidate_id', '')}) "
+            f"đang ở trạng thái: {obs_data.get('current_status', '')}."
+        )
+
+    if tool_name == "check_interviewer_availability":
+        if "busy_slots_in_range" not in obs_data:
+            return obs_data.get("message", "Không tìm thấy thông tin lịch của phỏng vấn viên này.")
+        busy = obs_data.get("busy_slots_in_range", [])
+        busy_str = ", ".join(f"{s['start']} → {s['end']}" for s in busy) if busy else "không có lịch bận nào trong khoảng đã chọn"
+        return f"{obs_data.get('full_name', '')} có các khung giờ bận: {busy_str}. {obs_data.get('message', '')}"
+
+    if tool_name == "schedule_interview":
+        return obs_data.get(
+            "message",
+            f"Đã đặt lịch phỏng vấn thành công cho ứng viên {obs_data.get('candidate_id', '')} "
+            f"với {obs_data.get('interviewer', '')} lúc {obs_data.get('interview_time', '')}."
+        )
+
+    if tool_name == "send_notification":
+        return obs_data.get(
+            "message",
+            f"Đã gửi thông báo '{obs_data.get('message_type', '')}' tới {obs_data.get('recipient', '')} "
+            f"qua {obs_data.get('channel', '')}."
+        )
+
+    if tool_name == "update_candidate_status":
+        return obs_data.get(
+            "message",
+            f"Đã cập nhật trạng thái ứng viên {obs_data.get('candidate_id', '')} "
+            f"từ '{obs_data.get('old_status', '')}' sang '{obs_data.get('new_status', '')}'."
+        )
+
+    # Fallback cho tool mới chưa được xử lý riêng, hoặc lỗi (EXECUTION_ERROR/PARSE_ERROR/UNKNOWN_TOOL/NOT_FOUND)
+    if "message" in obs_data:
+        return obs_data["message"]
+    if "error" in obs_data:
+        return f"Đã xảy ra lỗi khi xử lý yêu cầu: {obs_data['error']}"
+    return f"Đã hoàn tất xử lý qua MCP Server: {json.dumps(obs_data, ensure_ascii=False)}"
 
 if __name__ == "__main__":
     print("==========================================================")

@@ -1,29 +1,152 @@
 [
   {
     "step": 1,
-    "query": "Chào bạn, bạn có thể giới thiệu quy chế học vụ cơ bản của Đại học VinUni không?",
+    "query": "Chào bạn, bạn có thể giới thiệu quy trình tuyển dụng chung của công ty không?",
     "action_type": "FINAL_ANSWER",
-    "thought": "Câu hỏi chung về quy chế học vụ, trả lời trực tiếp không cần gọi Tool.",
-    "output": "[Mock Agent Response]: Xin chào! Quy chế học vụ VinUni yêu cầu sinh viên tích lũy tối thiểu 120 tín chỉ và duy trì GPA trên 2.0 để tốt nghiệp.",
-    "latency_ms": 2845.93
+    "thought": "OpenAI phản hồi trực tiếp bằng văn bản (không cần gọi công cụ).",
+    "output": "Quy trình tuyển dụng chung của công ty thường bao gồm các bước cơ bản sau:\n\n1. **Xác định nhu cầu tuyển dụng**: Công ty nhận diện nhu cầu cần tuyển dụng dựa trên việc phân tích công việc và nguồn lực cần thiết.\n\n2. **Đăng thông tin tuyển dụng**: Thông tin về vị trí tuyển dụng được đăng tải trên các kênh thông tin nội bộ và bên ngoài như website công ty, mạng xã hội, và các trang tuyển dụng.\n\n3. **Tiếp nhận hồ sơ**: Ứng viên gửi hồ sơ ứng tuyển bao gồm CV và các tài liệu liên quan.\n\n4. **Sàng lọc hồ sơ**: Bộ phận tuyển dụng sẽ xem xét, đánh giá hồ sơ để chọn ra những ứng viên phù hợp nhất với tiêu chí yêu cầu.\n\n5. **Phỏng vấn**: Các ứng viên được chọn sẽ tham gia phỏng vấn trực tiếp hoặc phỏng vấn qua video để đánh giá kỹ năng và thái độ.\n\n6. **Kiểm tra tham chiếu**: Công ty có thể liên hệ với các tham chiếu mà ứng viên cung cấp để xác minh thông tin.\n\n7. **Đưa ra quyết định**: Sau khi phỏng vấn và kiểm tra, công ty sẽ đưa ra quyết định tuyển dụng.\n\n8. **Thông báo kết quả**: Ứng viên sẽ nhận được thông báo về kết quả tuyển dụng, bao gồm cả những ứng viên được mời làm việc và những người không đạt.\n\n9. **Hoàn tất thủ tục tuyển dụng**: Với ứng viên được chọn, công ty sẽ hoàn thành các thủ tục cần thiết để chính thức mời họ gia nhập.\n\nQuy trình tuyển dụng có thể thay đổi tùy thuộc vào công ty, vị trí tuyển dụng và các yêu cầu cụ thể.",
+    "latency_ms": 10132.11
   },
   {
     "step": 1,
-    "query": "Hãy tra cứu thông tin học vụ của sinh viên SV2026001.",
+    "query": "Vị trí Backend Java Developer yêu cầu những kỹ năng gì?",
     "action_type": "TOOL_EXECUTION",
-    "tool_name": "academic_query",
+    "tool_name": "job_criteria_lookup",
     "arguments": {
-      "student_id": "SV2026001"
+      "position_name": "Backend Java Developer"
     },
-    "observation": {},
-    "latency_ms": 799.12
+    "observation": {
+      "status": "SUCCESS",
+      "count": 1,
+      "data": [
+        {
+          "position_name": "Backend Java Developer",
+          "department": "Engineering",
+          "level": "Mid-level",
+          "required_skills": [
+            "Java",
+            "Spring Boot",
+            "Microservices",
+            "SQL"
+          ],
+          "preferred_skills": [
+            "Docker",
+            "Kubernetes",
+            "Kafka"
+          ],
+          "min_experience_years": 2,
+          "education_requirement": "Cử nhân CNTT hoặc tương đương",
+          "salary_range": "20-35 triệu VNĐ",
+          "status": "Đang tuyển",
+          "position_id": "POS2026001"
+        }
+      ]
+    },
+    "latency_ms": 1128.68
   },
   {
     "step": 2,
-    "query": "Hãy tra cứu thông tin học vụ của sinh viên SV2026001.",
+    "query": "Vị trí Backend Java Developer yêu cầu những kỹ năng gì?",
     "action_type": "FINAL_ANSWER",
     "thought": "Tổng hợp kết quả từ MCP Server thành công.",
-    "output": "Chưa thể trả lời chi tiết do chưa nhận được dữ liệu từ MCP Server (hãy hoàn thành TODO 2.1).",
+    "output": "Tìm thấy các vị trí sau:\n\n🔹 Backend Java Developer (Engineering) — Đang tuyển\n   • Cấp bậc: Mid-level\n   • Kỹ năng bắt buộc: Java, Spring Boot, Microservices, SQL\n   • Kỹ năng ưu tiên: Docker, Kubernetes, Kafka\n   • Kinh nghiệm tối thiểu: 2 năm\n   • Học vấn: Cử nhân CNTT hoặc tương đương\n   • Mức lương: 20-35 triệu VNĐ",
+    "latency_ms": 10.0
+  },
+  {
+    "step": 1,
+    "query": "Hãy đặt lịch phỏng vấn cho ứng viên CV2026001 với anh Lê Văn Cường (EMP001) vào lúc 09:00 ngày 22/09/2026, hình thức online.",
+    "action_type": "TOOL_EXECUTION",
+    "tool_name": "schedule_interview",
+    "arguments": {
+      "candidate_id": "CV2026001",
+      "interviewer_id": "EMP001",
+      "interview_time": "2026-09-22T09:00:00",
+      "location": "online"
+    },
+    "observation": {
+      "status": "SUCCESS",
+      "booking_id": "INT-CV2026001-002",
+      "candidate_id": "CV2026001",
+      "interviewer": "Lê Văn Cường",
+      "interview_time": "2026-09-22T09:00:00",
+      "location": "online",
+      "message": "Đặt lịch phỏng vấn thành công cho Nguyễn Văn An với Lê Văn Cường lúc 2026-09-22T09:00:00."
+    },
+    "latency_ms": 1124.91
+  },
+  {
+    "step": 2,
+    "query": "Hãy đặt lịch phỏng vấn cho ứng viên CV2026001 với anh Lê Văn Cường (EMP001) vào lúc 09:00 ngày 22/09/2026, hình thức online.",
+    "action_type": "FINAL_ANSWER",
+    "thought": "Tổng hợp kết quả từ MCP Server thành công.",
+    "output": "Đặt lịch phỏng vấn thành công cho Nguyễn Văn An với Lê Văn Cường lúc 2026-09-22T09:00:00.",
+    "latency_ms": 10.0
+  },
+  {
+    "step": 1,
+    "query": "Ứng viên CV2026002 ứng tuyển vị trí AI Engineer, hãy chấm điểm độ phù hợp và nếu điểm trên 70 thì tự động đặt lịch phỏng vấn với HR Phạm Thị Dung vào 10:00 ngày 25/09/2026.",
+    "action_type": "TOOL_EXECUTION",
+    "tool_name": "job_criteria_lookup",
+    "arguments": {
+      "position_name": "AI Engineer"
+    },
+    "observation": {
+      "status": "SUCCESS",
+      "count": 1,
+      "data": [
+        {
+          "position_name": "AI Engineer (RAG/LLM)",
+          "department": "Product",
+          "level": "Junior-Mid",
+          "required_skills": [
+            "Python",
+            "FastAPI",
+            "LLM",
+            "Vector DB"
+          ],
+          "preferred_skills": [
+            "LangChain",
+            "Claude API",
+            "pgvector"
+          ],
+          "min_experience_years": 1,
+          "education_requirement": "Cử nhân CNTT/AI hoặc tương đương",
+          "salary_range": "18-30 triệu VNĐ",
+          "status": "Đang tuyển",
+          "position_id": "POS2026002"
+        }
+      ]
+    },
+    "latency_ms": 3393.18
+  },
+  {
+    "step": 2,
+    "query": "Ứng viên CV2026002 ứng tuyển vị trí AI Engineer, hãy chấm điểm độ phù hợp và nếu điểm trên 70 thì tự động đặt lịch phỏng vấn với HR Phạm Thị Dung vào 10:00 ngày 25/09/2026.",
+    "action_type": "FINAL_ANSWER",
+    "thought": "Tổng hợp kết quả từ MCP Server thành công.",
+    "output": "Tìm thấy các vị trí sau:\n\n🔹 AI Engineer (RAG/LLM) (Product) — Đang tuyển\n   • Cấp bậc: Junior-Mid\n   • Kỹ năng bắt buộc: Python, FastAPI, LLM, Vector DB\n   • Kỹ năng ưu tiên: LangChain, Claude API, pgvector\n   • Kinh nghiệm tối thiểu: 1 năm\n   • Học vấn: Cử nhân CNTT/AI hoặc tương đương\n   • Mức lương: 18-30 triệu VNĐ",
+    "latency_ms": 10.0
+  },
+  {
+    "step": 1,
+    "query": "Hãy tra cứu thông tin ứng viên có mã CV9999999.",
+    "action_type": "TOOL_EXECUTION",
+    "tool_name": "get_candidate_status",
+    "arguments": {
+      "candidate_id": "CV9999999"
+    },
+    "observation": {
+      "status": "NOT_FOUND",
+      "message": "Không tìm thấy dữ liệu ứng viên khớp với candidate_id='CV9999999' / full_name='None'"
+    },
+    "latency_ms": 1417.11
+  },
+  {
+    "step": 2,
+    "query": "Hãy tra cứu thông tin ứng viên có mã CV9999999.",
+    "action_type": "FINAL_ANSWER",
+    "thought": "Tổng hợp kết quả từ MCP Server thành công.",
+    "output": "Không tìm thấy dữ liệu ứng viên khớp với candidate_id='CV9999999' / full_name='None'",
     "latency_ms": 10.0
   }
 ]
